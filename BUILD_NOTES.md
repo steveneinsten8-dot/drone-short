@@ -98,3 +98,14 @@ Audio (FINAL, do not regenerate): `../vo-gemini/drone-mix-gemini.mp3` — Gemini
   BEHIND them. New cameras TRACK modernAt(t,8) with offset (+10,-3,+22)/(+8,-2.5,+18):
   drone dead centre at f1668/1834/1999, grows 5.6 -> 9.9 deg (verified numerically).
 - Shots 1, 3, 4, 7 untouched. TOTAL/SNAP/timeout/guard unchanged. tsc clean, bundle OK.
+
+## Camera fixes round 2, 2026-11-26 ~01:40 WIB (bench2 stills)
+- Shot 2 STILL BROKEN in bench2: the Aerial Target read as a dark disc, not a plane —
+  its prop faces +X (east), so the east cameras looked straight down its nose. New
+  cameras shoot from the SOUTH-WEST (~21 m, fov 50/46): plane seen ~50 deg off nose-on,
+  all 3 soldiers in frame (verified numerically), swing legs 1.6 m off the sight line.
+- Shot 6 weak in bench2: Parrot in frame but a thin dark smudge vs the house wall at
+  16 m. New cameras pull in to ~10 m, fov 44/40: Parrot ~2x bigger (rotors ~13 deg),
+  youth head near centre, phone in frame (verified numerically).
+- Shots 5 and 8 FIXED in bench2 (Queen Bee dead centre with bee joke, no tower; drone
+  dead centre in golden light) — untouched this round. Shots 1, 3, 4, 7 untouched.
