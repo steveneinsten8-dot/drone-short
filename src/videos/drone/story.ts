@@ -154,19 +154,38 @@ const dolly = (pos: V3, look: V3, k: number, rest: Partial<Cam> = {}): Shot =>
 // ---- framings (f -> camera); each pushes in from the frame its key starts ----
 const S1a = (f: number) => dolly([20, 16, -58], [0, 10, 0], pushK(f, 0, 0.002), { fov: 44 });
 const S1b = (f: number) => dolly([10, 13, -40], [0, 12, 5], pushK(f, 120, 0.002), { fov: 40 });
-const S2a = (f: number) => dolly([PARK[0] + 9, D0 + 2.2, PARK[2] - 12], [PARK[0], D0 + 1.2, PARK[2]], pushK(f, 209, 0.002), { fov: 40 });
-const S2b = (f: number) => dolly([PARK[0] + 5, D0 + 1.8, PARK[2] - 8], [PARK[0] + 2, D0 + 1.0, PARK[2] + 2], pushK(f, 350, 0.002), { fov: 36, roll: 0.03 });
+// FIX 2026-11-26 (bench stills f344): the old south-east cameras sat ~10 m from the
+// swing frame, so its legs crossed the frame at huge scale, and the Aerial Target sat
+// dead-centre 15 m out and read as one giant dark blob. New cameras shoot from the
+// EAST at ~21 m, fov 50: the plane reads side-on at a sane size, the soldiers fit
+// (z-spread ±12 deg vs 14.7 deg half-fov), and the swing frame is a thin line far away.
+const S2a = (f: number) => dolly([91, D0 + 5, PARK[2] + 1], [69, D0 + 1, PARK[2] + 1.5], pushK(f, 209, 0.0015), { fov: 54 });
+const S2b = (f: number) => dolly([91, D0 + 4, PARK[2] + 3], [69.5, D0 + 1.2, PARK[2] + 1.5], pushK(f, 350, 0.0015), { fov: 42, roll: 0.03 });
 const S3a = (f: number) => dolly([46, D0 + 2, -70], [58, D0 + 1, -62], pushK(f, 480, 0.002), { fov: 42 });
 const S3b = (f: number) => dolly([60, D0 + 4, -75], [80, 10, -45], pushK(f, 580, 0.002), { fov: 40 });
 const S4a = (f: number) => dolly([82, D0 + 5, -55], [95, 6, -35], pushK(f, 700, 0.003), { fov: 40, roll: -0.03 });
-const S5a = (f: number) => dolly([8, 10, -45], [0, 24, -10], pushK(f, 800, 0.002), { fov: 44 });
-const S5b = (f: number) => dolly([4, 9, -35], [10, 24, 5], pushK(f, 1000, 0.0015, 0.006, 35), { fov: 40 });
-const S6a = (f: number) => dolly([PARK[0] + 7, D0 + 1.8, PARK[2] - 9], [PARK[0] + 1, D0 + 1.3, PARK[2]], pushK(f, 1203, 0.002), { fov: 40 });
-const S6b = (f: number) => dolly([PARK[0] + 4, D0 + 1.5, PARK[2] - 6], [PARK[0] + 2, D0 + 2.5, PARK[2] + 1], pushK(f, 1340, 0.002), { fov: 36 });
+// FIX 2026-11-26 (bench still f1001): the old cameras looked north from z=-45/-35
+// straight through the bridge tower at z=-27, so the tower filled the frame and the
+// Queen Bee was never visible. New cameras TRACK the plane: look = queenBeeAt(t),
+// camera offset (+26,-11,+26) south-east of it, so the tower stays behind the plane.
+const S5a = (f: number) => { const q = queenBeeAt(T(f)); return dolly([q[0] + 26, q[1] - 11, q[2] + 26], q, pushK(f, 800, 0.001), { fov: 46 }); };
+const S5b = (f: number) => { const q = queenBeeAt(T(f)); return dolly([q[0] + 20, q[1] - 8, q[2] + 20], q, pushK(f, 1000, 0.0015, 0.006, 35), { fov: 42 }); };
+// FIX 2026-11-26 (bench still f1336): the old cameras were ~9 m from the youth with
+// fov 36-40, so the Parrot (3 m above the look point) sat at the top edge and only its
+// rotors peeked in, while the swing legs crossed the frame. New cameras shoot from the
+// EAST at ~20 m, fov 46, look y=8 midway between youth (head ~8.2) and Parrot (~9.8):
+// both sit ~6 deg off centre, well inside the frame.
+const S6a = (f: number) => dolly([91, D0 + 4, PARK[2] + 1], [71.5, D0 + 2, PARK[2] + 2], pushK(f, 1203, 0.0015), { fov: 46 });
+const S6b = (f: number) => dolly([90, D0 + 3.5, PARK[2] + 2], [71.8, D0 + 2.3, PARK[2] + 2.5], pushK(f, 1340, 0.0015), { fov: 42 });
 const S7a = (f: number) => dolly([14, 10, -32], [0, 12, -5], pushK(f, 1470, 0.002), { fov: 42 });
 const S7b = (f: number) => dolly([8, 8, -24], [0, 11, -2], pushK(f, 1560, 0.002), { fov: 38, roll: 0.03 });
-const S8a = (f: number) => dolly([6, 9, -30], [0, 12, -20], pushK(f, 1668, 0.0025), { fov: 40 });
-const S8b = (f: number) => dolly([2, 7, -22], [0, 11, -10], pushK(f, 1830, 0.0015, 0.006, 32), { fov: 38 });
+// FIX 2026-11-26 (bench still f1834): the old cameras sat at z=-30/-22 looking NORTH
+// while the drone flies from z=-70 toward z=-18 — at f1834 it was at z=-44, BEHIND
+// the camera, so the frame showed only sunset sky. New cameras TRACK the drone:
+// look = modernAt(t, 8), camera offset (+10,-3,+22) south-east of it, so the drone
+// stays centred and grows from ~15% to ~23% of frame height as it approaches.
+const S8a = (f: number) => { const m = modernAt(T(f), 8); return dolly([m[0] + 10, m[1] - 3, m[2] + 22], m, pushK(f, 1668, 0.0015), { fov: 44 }); };
+const S8b = (f: number) => { const m = modernAt(T(f), 8); return dolly([m[0] + 8, m[1] - 2.5, m[2] + 18], m, pushK(f, 1830, 0.0015, 0.006, 32), { fov: 40 }); };
 
 const CAMS: Record<number, Key[]> = {
   1: [
