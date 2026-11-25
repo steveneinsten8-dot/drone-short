@@ -82,3 +82,19 @@ Audio (FINAL, do not regenerate): `../vo-gemini/drone-mix-gemini.mp3` — Gemini
 ## Remaining
 1. Rachel supplies GitHub PAT again → create repo `steveneinsten8-dot/drone-short`, upload.
 2. GitHub bench 30 f → verify → preview stills → Rachel approves → full 8-chunk render.
+
+## Camera fixes 2026-11-26 ~01:20 WIB (bench stills round 1 — Rachel approved the fix)
+- Shot 2 (f344): old SE cameras sat ~10 m from the swing frame (legs crossed huge) and the
+  Aerial Target sat dead-centre 15 m out (dark blob). New east cameras at ~21 m, fov 54/42:
+  plane side-on at sane size, all 3 soldiers in frame (verified numerically: worst -15.1 deg
+  vs 16.0 deg half-fov). Swing frame now a thin line far away.
+- Shot 5 (f1001): old cameras looked north through the bridge tower (z=-27). New cameras
+  TRACK queenBeeAt(t) with offset (+26,-11,+26)/(+20,-8,+20): plane dead centre, tower out
+  of frame (verified numerically).
+- Shot 6 (f1336): old cameras ~9 m out, fov 36-40, Parrot at the top edge (rotors only).
+  New east cameras at ~20 m, fov 46/42, look y=8 between youth and Parrot: youth, phone and
+  Parrot all ~6 deg off centre (verified numerically).
+- Shot 8 (f1834): old cameras at z=-30/-22 looked north while the drone was at z=-44
+  BEHIND them. New cameras TRACK modernAt(t,8) with offset (+10,-3,+22)/(+8,-2.5,+18):
+  drone dead centre at f1668/1834/1999, grows 5.6 -> 9.9 deg (verified numerically).
+- Shots 1, 3, 4, 7 untouched. TOTAL/SNAP/timeout/guard unchanged. tsc clean, bundle OK.
