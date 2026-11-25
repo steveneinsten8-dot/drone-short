@@ -154,13 +154,13 @@ const dolly = (pos: V3, look: V3, k: number, rest: Partial<Cam> = {}): Shot =>
 // ---- framings (f -> camera); each pushes in from the frame its key starts ----
 const S1a = (f: number) => dolly([20, 16, -58], [0, 10, 0], pushK(f, 0, 0.002), { fov: 44 });
 const S1b = (f: number) => dolly([10, 13, -40], [0, 12, 5], pushK(f, 120, 0.002), { fov: 40 });
-// FIX 2026-11-26 (bench stills f344): the old south-east cameras sat ~10 m from the
-// swing frame, so its legs crossed the frame at huge scale, and the Aerial Target sat
-// dead-centre 15 m out and read as one giant dark blob. New cameras shoot from the
-// EAST at ~21 m, fov 50: the plane reads side-on at a sane size, the soldiers fit
-// (z-spread ±12 deg vs 14.7 deg half-fov), and the swing frame is a thin line far away.
-const S2a = (f: number) => dolly([91, D0 + 5, PARK[2] + 1], [69, D0 + 1, PARK[2] + 1.5], pushK(f, 209, 0.0015), { fov: 54 });
-const S2b = (f: number) => dolly([91, D0 + 4, PARK[2] + 3], [69.5, D0 + 1.2, PARK[2] + 1.5], pushK(f, 350, 0.0015), { fov: 42, roll: 0.03 });
+// FIX round 2, 2026-11-26 (bench2 still f344): the east cameras fixed the swing legs
+// but the Aerial Target still read as a dark disc — its prop faces +X (east), so from
+// the east we look straight down its nose. New cameras shoot from the SOUTH-WEST at
+// ~21 m, fov 50/46: the plane is seen 50 deg off nose-on (fuselage + wings read as a
+// plane), all 3 soldiers fit, and the swing legs stay 1.6 m off the sight line.
+const S2a = (f: number) => dolly([52, D0 + 5, PARK[2] - 19], [68, D0 + 1, PARK[2] + 1], pushK(f, 209, 0.0015), { fov: 50 });
+const S2b = (f: number) => dolly([56, D0 + 4, PARK[2] - 15], [68, D0 + 1.2, PARK[2] + 1], pushK(f, 350, 0.0015), { fov: 46, roll: 0.03 });
 const S3a = (f: number) => dolly([46, D0 + 2, -70], [58, D0 + 1, -62], pushK(f, 480, 0.002), { fov: 42 });
 const S3b = (f: number) => dolly([60, D0 + 4, -75], [80, 10, -45], pushK(f, 580, 0.002), { fov: 40 });
 const S4a = (f: number) => dolly([82, D0 + 5, -55], [95, 6, -35], pushK(f, 700, 0.003), { fov: 40, roll: -0.03 });
@@ -170,13 +170,13 @@ const S4a = (f: number) => dolly([82, D0 + 5, -55], [95, 6, -35], pushK(f, 700, 
 // camera offset (+26,-11,+26) south-east of it, so the tower stays behind the plane.
 const S5a = (f: number) => { const q = queenBeeAt(T(f)); return dolly([q[0] + 26, q[1] - 11, q[2] + 26], q, pushK(f, 800, 0.001), { fov: 46 }); };
 const S5b = (f: number) => { const q = queenBeeAt(T(f)); return dolly([q[0] + 20, q[1] - 8, q[2] + 20], q, pushK(f, 1000, 0.0015, 0.006, 35), { fov: 42 }); };
-// FIX 2026-11-26 (bench still f1336): the old cameras were ~9 m from the youth with
-// fov 36-40, so the Parrot (3 m above the look point) sat at the top edge and only its
-// rotors peeked in, while the swing legs crossed the frame. New cameras shoot from the
-// EAST at ~20 m, fov 46, look y=8 midway between youth (head ~8.2) and Parrot (~9.8):
-// both sit ~6 deg off centre, well inside the frame.
-const S6a = (f: number) => dolly([91, D0 + 4, PARK[2] + 1], [71.5, D0 + 2, PARK[2] + 2], pushK(f, 1203, 0.0015), { fov: 46 });
-const S6b = (f: number) => dolly([90, D0 + 3.5, PARK[2] + 2], [71.8, D0 + 2.3, PARK[2] + 2.5], pushK(f, 1340, 0.0015), { fov: 42 });
+// FIX round 2, 2026-11-26 (bench2 still f1336): the east cameras got the Parrot in
+// frame, but at ~16 m with the camera level with it the white quad read as a thin dark
+// smudge against the house wall. New cameras pull in to ~10 m, fov 44/40, look y=8.5
+// between youth head (8.2) and Parrot (9.8): the Parrot is ~2x bigger (rotors span
+// ~13 deg) and the youth stays centred; the swing bar is a thin line above her head.
+const S6a = (f: number) => dolly([84, D0 + 2.5, PARK[2] + 1], [71.5, D0 + 2.5, PARK[2] + 2], pushK(f, 1203, 0.0015), { fov: 44 });
+const S6b = (f: number) => dolly([82, D0 + 2, PARK[2] + 2], [71.8, D0 + 2.8, PARK[2] + 2.5], pushK(f, 1340, 0.0015), { fov: 40 });
 const S7a = (f: number) => dolly([14, 10, -32], [0, 12, -5], pushK(f, 1470, 0.002), { fov: 42 });
 const S7b = (f: number) => dolly([8, 8, -24], [0, 11, -2], pushK(f, 1560, 0.002), { fov: 38, roll: 0.03 });
 // FIX 2026-11-26 (bench still f1834): the old cameras sat at z=-30/-22 looking NORTH
