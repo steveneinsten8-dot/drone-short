@@ -1,0 +1,65 @@
+name: Render chunk Drone
+
+# Render 1 chunk Drone penuh (250 frame, ~100 menit di CPU pada kecepatan bench Tacoma).
+# Dipakai HANYA kalau bench 30 frame OK dan Rachel sudah menyetujui preview stills.
+# Cara pakai: Actions tab -> Render chunk Drone -> Run workflow, isi chunk 0-7.
+# 1 job = 1 chunk, maks 6 jam/job. 8 chunk bisa jalan paralel (20 job paralel di Free).
+on:
+  workflow_dispatch:
+    inputs:
+      chunk:
+        description: "Chunk 0-7 (0:0-249, 1:250-499, 2:500-749, 3:750-999, 4:1000-1249, 5:1250-1499, 6:1500-1749, 7:1750-1999)"
+        required: true
+        default: "0"
+
+jobs:
+  render:
+    name: Chunk ${{ inputs.chunk }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chrome for Remotion
+        run: npx remotion browser ensure
+
+      - name: Map chunk to frames
+        run: |
+          case "${{ inputs.chunk }}" in
+            0) echo "FRAMES=0-249" >> $GITHUB_ENV ;;
+            1) echo "FRAMES=250-499" >> $GITHUB_ENV ;;
+            2) echo "FRAMES=500-749" >> $GITHUB_ENV ;;
+            3) echo "FRAMES=750-999" >> $GITHUB_ENV ;;
+            4) echo "FRAMES=1000-1249" >> $GITHUB_ENV ;;
+            5) echo "FRAMES=1250-1499" >> $GITHUB_ENV ;;
+            6) echo "FRAMES=1500-1749" >> $GITHUB_ENV ;;
+            7) echo "FRAMES=1750-1999" >> $GITHUB_ENV ;;
+            *) echo "Chunk harus 0-7"; exit 1 ;;
+          esac
+
+      - name: Render chunk
+        run: |
+          mkdir -p out
+          npx remotion render DroneShort "out/drone-part${{ inputs.chunk }}.mp4" \
+            --frames="$FRAMES" \
+            --concurrency=2 \
+            --gl=angle \
+            --props='{"post":{"lens":false,"bloom":false,"msaa":false,"shadows":false}}'
+
+      - name: Verify output
+        run: ls -lh out/ && ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 "out/drone-part${{ inputs.chunk }}.mp4" || true
+
+      # Artifact gratis cuma 500 MB, chunk ~15-20 MB jadi masih muat.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: drone-part${{ inputs.chunk }}
+          path: out/drone-part${{ inputs.chunk }}.mp4
+          retention-days: 7
